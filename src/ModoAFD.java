@@ -19,31 +19,26 @@ public class ModoAFD {
         Scanner scanner = new Scanner(System.in);
 
         try {
-            // 1. Alfabeto
             String alphaLine = scanner.nextLine();
             for (String s : alphaLine.split(" ")) {
                 if (!s.isEmpty()) alfabeto.add(s.charAt(0));
             }
 
-            // 2. Estados
             String statesLine = scanner.nextLine();
             if (!statesLine.trim().isEmpty()) {
                 estados.addAll(Arrays.asList(statesLine.split(" ")));
             }
 
-            // 3. Estado inicial
             estadoInicial = scanner.nextLine().trim();
             if (estadoInicial.isEmpty() || !estados.contains(estadoInicial)) {
                 throw new IllegalArgumentException("Estado inicial inválido o no definido.");
             }
 
-            // 4. Estados finales
             String finalsLine = scanner.nextLine();
             if (!finalsLine.trim().isEmpty()) {
                 estadosFinales.addAll(Arrays.asList(finalsLine.split(" ")));
             }
 
-            // 5. Transiciones
             while (true) {
                 String linea = scanner.nextLine();
                 if (linea.equalsIgnoreCase("fin")) break;

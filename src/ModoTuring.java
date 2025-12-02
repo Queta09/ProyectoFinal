@@ -8,7 +8,6 @@ public class ModoTuring {
     private String estadoFinal;
     private final Map<String, Map<Character, Transicion>> transiciones;
 
-    // Clase interna que representa una transición de la máquina de Turing
     private static class Transicion {
         final String siguienteEstado;
         final char escribir;
@@ -31,32 +30,27 @@ public class ModoTuring {
         Scanner scanner = new Scanner(System.in);
 
         try {
-            // 1. Alfabeto
             String alphaLine = scanner.nextLine();
             for (String s : alphaLine.split(" ")) {
                 if (!s.isEmpty()) alfabeto.add(s.charAt(0));
             }
             if (!alfabeto.contains('_')) alfabeto.add('_');
 
-            // 2. Estados
             String statesLine = scanner.nextLine();
             if (!statesLine.trim().isEmpty()) {
                 estados.addAll(Arrays.asList(statesLine.split(" ")));
             }
 
-            // 3. Estado inicial
             estadoInicial = scanner.nextLine().trim();
             if (estadoInicial.isEmpty() || !estados.contains(estadoInicial)) {
                 throw new IllegalArgumentException("Estado inicial inválido o no definido.");
             }
 
-            // 4. Estado final
             estadoFinal = scanner.nextLine().trim();
             if (estadoFinal.isEmpty() || !estados.contains(estadoFinal)) {
                 throw new IllegalArgumentException("Estado final inválido o no definido.");
             }
 
-            // 5. Transiciones
             while (true) {
                 String linea = scanner.nextLine();
                 if (linea.equalsIgnoreCase("fin")) break;
@@ -94,7 +88,6 @@ public class ModoTuring {
         }
     }
 
-    // Ejecuta la máquina de Turing sobre una cadena de entrada
     public boolean ejecutar(String entrada) {
         if (estadoInicial == null || estadoFinal == null) {
             return false;
@@ -115,46 +108,36 @@ public class ModoTuring {
                     return false;
                 }
 
-                // 2. Leer símbolo actual
                 char simbolo;
                 if (cabeza >= 0 && cabeza < cinta.size()) {
                     simbolo = cinta.get(cabeza);
                 } else {
-                    // Si la cabeza se mueve fuera del rango derecho, se lee '_'.
-                    // Si la cabeza se mueve fuera del rango izquierdo (< 0), se lee '_'.
                     simbolo = '_';
                 }
 
-                // 3. Buscar Transición
                 Map<Character, Transicion> mapa = transiciones.get(estadoActual);
                 if (mapa == null || !mapa.containsKey(simbolo)) {
-                    return false; // Se detiene sin una regla
+                    return false;
                 }
 
                 Transicion t = mapa.get(simbolo);
 
-                // 4. Escribir: Solo se escribe si la cabeza está en el área actual de la cinta.
                 if (cabeza >= 0 && cabeza < cinta.size()) {
                     cinta.set(cabeza, t.escribir);
                 }
 
                 estadoActual = t.siguienteEstado;
 
-                // 5. Mover Cabeza
+
                 if (t.direccion == 'R') {
                     cabeza++;
-                    // Expansión a la derecha si es necesario
                     if (cabeza >= cinta.size()) cinta.add('_');
                 } else if (t.direccion == 'L') {
                     cabeza--;
 
-                    // --- CORRECCIÓN CRUCIAL PARA EL LÍMITE IZQUIERDO ---
-                    // Si la cabeza se mueve a la izquierda más allá del inicio de la lista (cabeza < 0),
-                    // en una implementación real de MT, se debería insertar un blanco al inicio.
-                    // Aquí, si la cabeza es menor que 0, insertamos un blanco y ajustamos la cabeza a 0.
                     if (cabeza < 0) {
-                        cinta.add(0, '_'); // Inserta un blanco al inicio
-                        cabeza = 0; // La cabeza se queda en el nuevo índice 0.
+                        cinta.add(0, '_');
+                        cabeza = 0;
                     }
                 }
             }
@@ -162,6 +145,6 @@ public class ModoTuring {
             return false;
         }
 
-        return true; // Aceptación
+        return true;
     }
 }

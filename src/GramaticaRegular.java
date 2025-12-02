@@ -17,7 +17,6 @@ public class GramaticaRegular {
         Scanner scanner = new Scanner(System.in);
 
         try {
-            // 1. Terminales (Corrección de lectura robusta)
             String termsLine = scanner.nextLine().trim();
             if (!termsLine.isEmpty()) {
                 for (String s : termsLine.split(" ")) {
@@ -27,22 +26,18 @@ public class GramaticaRegular {
                 }
             }
 
-            // 2. Variables (Corrección de lectura robusta)
             String varsLine = scanner.nextLine().trim();
             if (!varsLine.isEmpty()) {
                 variables.addAll(Arrays.asList(varsLine.split(" ")));
             }
 
-            // 3. Símbolo Inicial
             simboloInicial = scanner.nextLine().trim();
             if (simboloInicial.isEmpty() || !variables.contains(simboloInicial)) {
                 throw new IllegalArgumentException("El símbolo inicial es inválido o no está en el conjunto de variables.");
             }
 
-            // 4. Variables Finales (Se lee la línea)
             scanner.nextLine();
 
-            // 5. Producciones
             while (true) {
                 String linea = scanner.nextLine();
                 if (linea.equalsIgnoreCase("fin")) break;
@@ -86,7 +81,6 @@ public class GramaticaRegular {
         return aceptaDesde(simboloInicial, cadena);
     }
 
-    // Método de derivación corregido para lógica de A -> a y A -> aB
     private boolean aceptaDesde(String variable, String cadena) {
         if (cadena.length() > 2000) return false;
 
@@ -95,19 +89,16 @@ public class GramaticaRegular {
 
         for (String regla : reglas) {
 
-            // REGLA 1: Cadena Vacía (Epsilon)
             if (regla.equals("_") && cadena.isEmpty()) {
                 return true;
             }
 
-            // REGLA 2: Terminal Final (A -> a)
             if (regla.length() == 1 && terminales.contains(regla.charAt(0))) {
                 if (cadena.equals(regla)) {
                     return true;
                 }
             }
 
-            // REGLA 3: Terminal y Variable (A -> aB)
             if (regla.length() == 2 && terminales.contains(regla.charAt(0)) && variables.contains("" + regla.charAt(1))) {
                 char terminal = regla.charAt(0);
                 String siguienteVar = "" + regla.charAt(1);

@@ -33,7 +33,6 @@ public class VentanaPrincipal extends JFrame {
     }
 
     private void inicializarComponentes() {
-        // --- Panel Norte: Selector y Construcción ---
         JPanel panelNorte = new JPanel(new FlowLayout());
 
         selectorModo = new JComboBox<>(new String[]{
@@ -52,14 +51,12 @@ public class VentanaPrincipal extends JFrame {
 
         add(panelNorte, BorderLayout.NORTH);
 
-        // --- Panel Central: Resultados ---
         areaResultados = new JTextArea("Selecciona un modo y presiona 'Construir Modelo' para comenzar la definición secuencial.");
         areaResultados.setEditable(false);
         areaResultados.setPreferredSize(new Dimension(780, 400));
         JScrollPane scrollPane = new JScrollPane(areaResultados);
         add(scrollPane, BorderLayout.CENTER);
 
-        // --- Panel Sur: Entrada y Prueba ---
         JPanel panelSur = new JPanel(new BorderLayout());
 
         campoEntrada = new JTextField();
@@ -86,42 +83,34 @@ public class VentanaPrincipal extends JFrame {
 
         StringBuilder entradaSimulada = new StringBuilder();
 
-        // --- 1. CAPTURA SECUENCIAL DE DATOS ---
         try {
-            // Paso 1: Alfabeto/Terminales
             String input = JOptionPane.showInputDialog(this,
                     nombreClase + ": Introduce los símbolos del ALFABETO/TERMINALES (separados por espacio. Ej: a b).", "Paso 1/N", JOptionPane.PLAIN_MESSAGE);
             if (input == null) throw new NoSuchElementException("Construcción cancelada");
             entradaSimulada.append(input).append('\n');
 
-            // --- Lógica especial para ModoAutomataDePila (Alfabeto de Pila) ---
             if (nombreClase.equals("ModoAutomataDePila")) {
                 String inputPila = JOptionPane.showInputDialog(this,
                         "ModoAutomataDePila: Introduce el ALFABETO DE PILA (separados por espacio. Ej: Z A).", "Paso 2/N", JOptionPane.PLAIN_MESSAGE);
                 if (inputPila == null) throw new NoSuchElementException("Construcción cancelada");
                 entradaSimulada.append(inputPila).append('\n');
             }
-            // --- Fin de Lógica especial para AP ---
 
-            // Paso 2 (o 3): Estados/Variables
             input = JOptionPane.showInputDialog(this,
                     nombreClase + ": Introduce los ESTADOS/VARIABLES (separados por espacio. Ej: q0 q1).", "Paso " + (nombreClase.equals("ModoAutomataDePila") ? "3/N" : "2/N"), JOptionPane.PLAIN_MESSAGE);
             if (input == null) throw new NoSuchElementException("Construcción cancelada");
             entradaSimulada.append(input).append('\n');
 
-            // Paso 3 (o 4): Estado/Símbolo Inicial
             input = JOptionPane.showInputDialog(this,
                     nombreClase + ": Introduce el ESTADO/SÍMBOLO INICIAL (solo uno).", "Paso " + (nombreClase.equals("ModoAutomataDePila") ? "4/N" : "3/N"), JOptionPane.PLAIN_MESSAGE);
             if (input == null) throw new NoSuchElementException("Construcción cancelada");
             entradaSimulada.append(input).append('\n');
 
-            // Paso 4 (o 5): Estados/Variables Finales
             input = JOptionPane.showInputDialog(this,
                     nombreClase + ": Introduce los ESTADOS/VARIABLES FINALES (separados por espacio. Ej: qf).", "Paso " + (nombreClase.equals("ModoAutomataDePila") ? "5/N" : "4/N"), JOptionPane.PLAIN_MESSAGE);
             if (input == null) throw new NoSuchElementException("Construcción cancelada");
             entradaSimulada.append(input).append('\n');
 
-            // Paso 5 (o 6): Transiciones/Producciones (Bucle)
             String ejemploTransiciones = "";
             if (nombreClase.equals("ModoAFD")) {
                 ejemploTransiciones = "Ej: q0 a q1\\q1 b q0";
@@ -138,10 +127,8 @@ public class VentanaPrincipal extends JFrame {
                             + ejemploTransiciones, "Paso " + (nombreClase.equals("ModoAutomataDePila") ? "6/N" : "5/N") + ": Transiciones", JOptionPane.PLAIN_MESSAGE);
             if (transiciones == null) throw new NoSuchElementException("Construcción cancelada");
 
-            // Reemplazar el separador de la GUI por un salto de línea
             entradaSimulada.append(transiciones.replace("\\", "\n")).append('\n');
 
-            // Línea final para terminar la entrada
             entradaSimulada.append("fin").append('\n');
 
         } catch (NoSuchElementException e) {
@@ -150,7 +137,6 @@ public class VentanaPrincipal extends JFrame {
             return;
         }
 
-        // --- 2. SIMULACIÓN DE LA CONSOLA ---
         InputStream inputStreamOriginal = System.in;
         try {
             InputStream inputStreamNuevo = new ByteArrayInputStream(entradaSimulada.toString().getBytes());
